@@ -1,5 +1,7 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
+import ApplicationsModel from "./ApplicationsModel";
+import FavoritesModel from "./FavoritesModel";
 
 class VacanciesModel extends Model {
   id: number | undefined;
@@ -44,5 +46,25 @@ VacanciesModel.init(
     tableName: "vacancies",
   }
 );
+
+// Uma vaga pode ter várias candidaturas
+VacanciesModel.hasMany(ApplicationsModel, {
+  foreignKey: "vacancy_id",
+  as: "applications",
+});
+ApplicationsModel.belongsTo(VacanciesModel, {
+  foreignKey: "vacancy_id",
+  as: "vacancy",
+});
+
+// Uma vaga pode ser favoritada por vários usuários
+VacanciesModel.hasMany(FavoritesModel, {
+  foreignKey: "vacancy_id",
+  as: "favorites",
+});
+FavoritesModel.belongsTo(VacanciesModel, {
+  foreignKey: "vacancy_id",
+  as: "vacancy",
+});
 
 export default VacanciesModel;

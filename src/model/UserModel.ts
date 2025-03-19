@@ -1,5 +1,8 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
+import ApplicationsModel from "./ApplicationsModel";
+import FavoritesModel from "./FavoritesModel";
+import bcrypt from "bcrypt";
 
 class UserModel extends Model {
   id: number | undefined;
@@ -9,6 +12,14 @@ class UserModel extends Model {
   CPF: number | undefined;
   user_type: string | undefined;
   updatedBy: number | undefined;
+
+  public async hashPassword() {
+    this.password = await bcrypt.hash(this.password!, 10);
+  }
+
+  public async validatePassword(password: string): Promise<boolean> {
+    return await bcrypt.compare(password, this.password!);
+  }
 }
 
 UserModel.init(
@@ -49,5 +60,35 @@ UserModel.init(
     tableName: "users",
   }
 );
+
+// Mapeamento bidirecional: Um usuário pode ter várias candidaturas
+UserModel.hasMany(ApplicationsModel, {
+  foreignKey: "user_id",
+  as: "applications",
+});
+ApplicationsModel.belongsTo(UserModel, {
+  foreignKey: "user_id",
+  as: "user",
+});
+
+// Mapeamento bidirecional: Um usuário pode favoritar várias vagas
+UserModel.hasMany(FavoritesModel, {
+  foreignKey: "user_id",
+  as: "favorites",
+});
+FavoritesModel.belongsTo(UserModel, {
+  foreignKey: "user_id",
+  as: "user",
+});
+
+UserModel.beforeCreate(async (user: UserModel) => {
+  await user.hashPassword();
+});
+
+UserModel.beforeUpdate(async (user: UserModel) => {
+  if (user.changed("password")) {
+    await user.hashPassword();
+  }
+});
 
 export default UserModel;
