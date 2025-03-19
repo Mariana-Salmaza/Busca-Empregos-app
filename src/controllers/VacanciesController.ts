@@ -1,83 +1,77 @@
-import { Request, Response } from "express"
-import VacanciesModel from "../model/VacanciesModel"
+import { Request, Response } from "express";
+import VacanciesModel from "../model/VacanciesModel";
 
-// método que busca todos
-export const getAll = async (req: Request, res: Response) => {
-    const vacancies = await VacanciesModel.findAll()
-    res.send(vacancies)
-}
+// Buscar todas as vagas
+export const getAllVacancies = async (req: Request, res: Response) => {
+  const vacancies = await VacanciesModel.findAll();
+  res.send(vacancies);
+};
 
-// método que busca por id
-export const getVacanciesById = async (
-    req: Request<{ id: string }>,
-    res: Response) => {
-        
-        const vacancie = await VacanciesModel.findByPk(req.params.id)
+// Buscar vaga por ID
+export const getVacancyById = async (
+  req: Request<{ id: string }>,
+  res: Response
+) => {
+  const vacancy = await VacanciesModel.findByPk(req.params.id);
+  return res.json(vacancy);
+};
 
-        return res.json(vacancie);
+// Criar nova vaga
+export const createVacancy = async (req: Request, res: Response) => {
+  try {
+    const { title, description, location, salary, company_id } = req.body;
+    if (!title || !description || !location || !salary || !company_id) {
+      return res.status(400).json({ error: "Values required" });
     }
+    const vacancy = await VacanciesModel.create({
+      title,
+      description,
+      location,
+      salary,
+      company_id,
+    });
+    res.status(201).json(vacancy);
+  } catch (error) {
+    res.status(500).json("Erro interno no servidor " + error);
+  }
+};
 
-// método que cria uma nova vaga
-export const createVacancie = async (req: Request, res: Response) => {
-
-    try {
-        const { name } = req.body
-
-        if (!name || name === '') {
-            return res.status(400).json({error: 'Name is required'})
-        }
-
-        const vacancie = await VacanciesModel.create({ name })
-        res.status(201).json(vacancie)
-    } catch (error) {
-        res.status(500).json('Erro interno no servidor ' + error)
+// Atualizar vaga
+export const updateVacancy = async (
+  req: Request<{ id: string }>,
+  res: Response
+) => {
+  try {
+    const { title, description, location, salary, company_id } = req.body;
+    const vacancy = await VacanciesModel.findByPk(req.params.id);
+    if (!vacancy) {
+      return res.status(404).json({ error: "Vacancy not found" });
     }
-}
+    vacancy.title = title;
+    vacancy.description = description;
+    vacancy.location = location;
+    vacancy.salary = salary;
+    vacancy.company_id = company_id;
+    await vacancy.save();
+    res.status(200).json(vacancy);
+  } catch (error) {
+    res.status(500).json("Erro interno no servidor " + error);
+  }
+};
 
-// método que atualiza um usuário
-export const updateVacancie = async (
-    req: Request<{ id: string }>, 
-    res: Response) => {
-
-    try {
-        const { title } = req.body
-        if (!title || title === '') {
-            return res.status(400)
-                .json({error: 'Name is required'})
-        }
-
-        const vacancie = await VacanciesModel.findByPk(req.params.id)
-        if (!vacancie) {
-            return res.status(404)
-                .json({error: 'User not found'})
-        }
-
-        vacancie.title = title
-        
-        await vacancie.save()
-        res.status(201).json(vacancie)
-    } catch (error) {
-        res.status(500).json('Erro interno no servidor ' + error)
+// Excluir vaga
+export const deleteVacancyById = async (
+  req: Request<{ id: string }>,
+  res: Response
+) => {
+  try {
+    const vacancy = await VacanciesModel.findByPk(req.params.id);
+    if (!vacancy) {
+      return res.status(404).json({ error: "Vacancy not found" });
     }
-    
-}
-
-// método que destrói
-export const destroyVacancieById = async (
-    req: Request<{ id: string }>, 
-    res: Response) => {
-    
-        try {
-            const vacancie = await VacanciesModel.findByPk(req.params.id)
-            if (!vacancie) {
-                return res.status(404)
-                    .json({error: 'User not found'})
-            }
-    
-            await vacancie.destroy()
-    
-            res.status(204).send()
-        } catch (error) {
-            res.status(500).json('Erro interno no servidor ' + error)
-        }
-}
+    await vacancy.destroy();
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json("Erro interno no servidor " + error);
+  }
+};

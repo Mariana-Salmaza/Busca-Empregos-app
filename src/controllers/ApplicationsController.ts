@@ -1,62 +1,51 @@
 import { Request, Response } from "express";
 import ApplicationsModel from "../model/ApplicationsModel";
 
-// método que busca todos
-export const getAll = async (req: Request, res: Response) => {
+// Buscar todas as candidaturas
+export const getAllApplications = async (req: Request, res: Response) => {
   const applications = await ApplicationsModel.findAll();
   res.send(applications);
 };
 
-// método que busca por id
-export const getApplicationById = async (
-  req: Request<{ id: string }>,
-  res: Response
-) => {
-  const application = await ApplicationsModel.findByPk(req.params.id);
-  return res.json(application);
-};
-
-// método que cria uma nova aplicação
-export const createApplication = async (req: Request, res: Response) => {
+// Criar candidatura
+export const applyForVacancy = async (req: Request, res: Response) => {
   try {
-    const { user_id, vacancy_id, applied_at } = req.body;
-
-    if (!user_id || !vacancy_id || !applied_at) {
-      return res.status(400).json({ error: "All fields are required" });
+    const { user_id, vacancy_id, status } = req.body;
+    if (!user_id || !vacancy_id || !status) {
+      return res.status(400).json({ error: "Values required" });
     }
-
-    const application = await ApplicationsModel.create({ user_id, vacancy_id, applied_at });
+    const application = await ApplicationsModel.create({
+      user_id,
+      vacancy_id,
+      status,
+    });
     res.status(201).json(application);
   } catch (error) {
     res.status(500).json("Erro interno no servidor " + error);
   }
 };
 
-// método que atualiza uma aplicação
-export const updateApplication = async (
+// Atualizar status da candidatura
+export const updateApplicationStatus = async (
   req: Request<{ id: string }>,
   res: Response
 ) => {
   try {
-    const { user_id, vacancy_id, applied_at } = req.body;
-
+    const { status } = req.body;
     const application = await ApplicationsModel.findByPk(req.params.id);
     if (!application) {
       return res.status(404).json({ error: "Application not found" });
     }
-
-    application.user_id = user_id;
-    application.vacancy_id = vacancy_id;
-
+    application.status = status;
     await application.save();
-    res.status(201).json(application);
+    res.status(200).json(application);
   } catch (error) {
     res.status(500).json("Erro interno no servidor " + error);
   }
 };
 
-// método que destrói
-export const destroyApplicationById = async (
+// Remover candidatura
+export const deleteApplication = async (
   req: Request<{ id: string }>,
   res: Response
 ) => {
@@ -65,9 +54,7 @@ export const destroyApplicationById = async (
     if (!application) {
       return res.status(404).json({ error: "Application not found" });
     }
-
     await application.destroy();
-
     res.status(204).send();
   } catch (error) {
     res.status(500).json("Erro interno no servidor " + error);

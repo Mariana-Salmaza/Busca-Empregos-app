@@ -2,7 +2,6 @@
 import express from "express";
 import sequelize from "./config/database";
 import userRoutes from "./routes/UserRoutes";
-
 // instanciando uma variável com o servidor
 const app = express();
 const port = 3000;

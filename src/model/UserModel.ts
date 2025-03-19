@@ -8,10 +8,9 @@ class UserModel extends Model {
   password: string | undefined;
   CPF: number | undefined;
   user_type: string | undefined;
-  updateBy: number | undefined;
+  updatedBy: number | undefined;
 }
 
-// o init é onde vamos fazer o mapeamento das colunas do banco de dados pra dentro do modelo
 UserModel.init(
   {
     id: {
@@ -32,12 +31,16 @@ UserModel.init(
       allowNull: false,
     },
     CPF: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.BIGINT,
       allowNull: false,
     },
     user_type: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    updatedBy: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
   },
   {
