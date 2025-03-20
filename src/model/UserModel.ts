@@ -35,7 +35,6 @@ UserModel.init(
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
     password: {
       type: DataTypes.STRING,
@@ -44,7 +43,6 @@ UserModel.init(
     CPF: {
       type: DataTypes.STRING(11),
       allowNull: false,
-      unique: true,
     },
     updatedBy: {
       type: DataTypes.INTEGER,
@@ -55,6 +53,12 @@ UserModel.init(
     sequelize,
     modelName: "UserModel",
     tableName: "users",
+    indexes: [
+      {
+        unique: true,
+        fields: ["email", "CPF"],
+      },
+    ],
   }
 );
 
