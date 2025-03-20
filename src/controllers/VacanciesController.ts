@@ -3,8 +3,12 @@ import VacanciesModel from "../model/VacanciesModel";
 
 // Buscar todas as vagas
 export const getAllVacancies = async (req: Request, res: Response) => {
-  const vacancies = await VacanciesModel.findAll();
-  res.send(vacancies);
+  try {
+    const vacancies = await VacanciesModel.findAll();
+    res.json(vacancies);
+  } catch (error) {
+    res.status(500).json({ error: "Erro interno no servidor", details: error });
+  }
 };
 
 // Buscar vaga por ID
@@ -12,27 +16,38 @@ export const getVacancyById = async (
   req: Request<{ id: string }>,
   res: Response
 ) => {
-  const vacancy = await VacanciesModel.findByPk(req.params.id);
-  return res.json(vacancy);
+  try {
+    const vacancy = await VacanciesModel.findByPk(req.params.id);
+    if (!vacancy) {
+      return res.status(404).json({ error: "Vacancy not found" });
+    }
+    res.json(vacancy);
+  } catch (error) {
+    res.status(500).json({ error: "Erro interno no servidor", details: error });
+  }
 };
 
 // Criar nova vaga
 export const createVacancy = async (req: Request, res: Response) => {
   try {
-    const { title, description, location, salary, company_id } = req.body;
-    if (!title || !description || !location || !salary || !company_id) {
-      return res.status(400).json({ error: "Values required" });
+    const { title, description, salary, location, user_id } = req.body;
+
+    if (!user_id) {
+      return res.status(400).json({ message: "Usuário não autenticado!" });
     }
+
     const vacancy = await VacanciesModel.create({
       title,
       description,
-      location,
       salary,
-      company_id,
+      location,
+      user_id,
     });
-    res.status(201).json(vacancy);
+
+    return res.status(201).json(vacancy);
   } catch (error) {
-    res.status(500).json("Erro interno no servidor " + error);
+    console.error("Erro ao criar vaga:", error);
+    return res.status(500).json({ message: "Erro interno no servidor" });
   }
 };
 
@@ -42,25 +57,28 @@ export const updateVacancy = async (
   res: Response
 ) => {
   try {
-    const { title, description, location, salary, company_id } = req.body;
+    const { title, description, location, salary, user_id } = req.body; // user_id agora correto
+
     const vacancy = await VacanciesModel.findByPk(req.params.id);
     if (!vacancy) {
       return res.status(404).json({ error: "Vacancy not found" });
     }
+
     vacancy.title = title;
     vacancy.description = description;
     vacancy.location = location;
     vacancy.salary = salary;
-    vacancy.company_id = company_id;
+    vacancy.user_id = user_id;
+
     await vacancy.save();
     res.status(200).json(vacancy);
   } catch (error) {
-    res.status(500).json("Erro interno no servidor " + error);
+    res.status(500).json({ error: "Erro interno no servidor", details: error });
   }
 };
 
 // Excluir vaga
-export const deleteVacancyById = async (
+export const destroyVacancyById = async (
   req: Request<{ id: string }>,
   res: Response
 ) => {
@@ -72,6 +90,6 @@ export const deleteVacancyById = async (
     await vacancy.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(500).json("Erro interno no servidor " + error);
+    res.status(500).json({ error: "Erro interno no servidor", details: error });
   }
 };

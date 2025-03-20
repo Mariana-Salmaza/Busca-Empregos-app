@@ -9,8 +9,7 @@ class UserModel extends Model {
   name: string | undefined;
   email: string | undefined;
   password: string | undefined;
-  CPF: number | undefined;
-  user_type: string | undefined;
+  CPF: string | undefined;
   updatedBy: number | undefined;
 
   public async hashPassword() {
@@ -36,18 +35,16 @@ UserModel.init(
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     CPF: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.STRING(11),
       allowNull: false,
-    },
-    user_type: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      unique: true,
     },
     updatedBy: {
       type: DataTypes.INTEGER,

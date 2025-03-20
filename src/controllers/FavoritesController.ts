@@ -3,8 +3,12 @@ import FavoritesModel from "../model/FavoritesModel";
 
 // Buscar favoritos do usuário
 export const getAllFavorites = async (req: Request, res: Response) => {
-  const favorites = await FavoritesModel.findAll();
-  res.send(favorites);
+  try {
+    const favorites = await FavoritesModel.findAll();
+    res.json(favorites);
+  } catch (error) {
+    res.status(500).json({ error: "Erro interno no servidor", details: error });
+  }
 };
 
 // Criar um favorito
@@ -17,12 +21,12 @@ export const addFavorite = async (req: Request, res: Response) => {
     const favorite = await FavoritesModel.create({ user_id, vacancy_id });
     res.status(201).json(favorite);
   } catch (error) {
-    res.status(500).json("Erro interno no servidor " + error);
+    res.status(500).json({ error: "Erro interno no servidor", details: error });
   }
 };
 
 // Remover favorito
-export const deleteFavorite = async (
+export const destroyFavorite = async (
   req: Request<{ id: string }>,
   res: Response
 ) => {
@@ -34,6 +38,6 @@ export const deleteFavorite = async (
     await favorite.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(500).json("Erro interno no servidor " + error);
+    res.status(500).json({ error: "Erro interno no servidor", details: error });
   }
 };

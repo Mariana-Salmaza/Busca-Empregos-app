@@ -1,18 +1,19 @@
-import Express from "express";
+import express from "express";
 import {
-  getAll,
-  getVacanciesById,
-  createVacancie,
-  updateVacancie,
-  destroyVacancieById,
+  getAllVacancies,
+  getVacancyById,
+  createVacancy,
+  updateVacancy,
+  destroyVacancyById,
 } from "../controllers/VacanciesController";
 
-const router = Express.Router();
+const router = express.Router();
 
-router.get("/vacancies", getAll);
-router.get("/vacancies/:id", getVacanciesById);
-router.post("/vacancies", createVacancie);
-router.put("/vacancies/:id", updateVacancie);
-router.delete("/vacancies/:id", destroyVacancieById);
+router.post("/vacancies", createVacancy);
+
+router.get("/vacancies", getAllVacancies);
+router.get("/vacancies/:id", getVacancyById);
+router.put("/vacancies/:id", updateVacancy);
+router.delete("/vacancies/:id", destroyVacancyById);
 
 export default router;

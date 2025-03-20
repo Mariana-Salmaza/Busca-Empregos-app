@@ -1,27 +1,33 @@
-// importando a biblioteca
 import express from "express";
 import sequelize from "./config/database";
 import userRoutes from "./routes/UserRoutes";
-// instanciando uma variável com o servidor
+import VacanciesRoutes from "./routes/VacanciesRoutes";
+import FavoritesRoutes from "./routes/FavoritesRoutes";
+import ApplicationsRoutes from "./routes/ApplicationsRoutes";
+import LoginRoutes from "./routes/LoginRoutes";
+
 const app = express();
 const port = 3000;
+
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Hello, World");
 });
 
 app.use(userRoutes);
+app.use(VacanciesRoutes);
+app.use(FavoritesRoutes);
+app.use(ApplicationsRoutes);
+app.use(LoginRoutes);
 
-// sincronização do modelo com o banco de dados
-// sync database
-// promisse
 sequelize
   .sync({ alter: true })
   .then(() => {
-    console.log("database foi sicronizado com sucesso");
+    console.log("Database foi sincronizado com sucesso");
   })
   .catch((error) => {
-    console.log("deu erro na sicronização", error);
+    console.log("Erro na sincronização", error);
   });
 
 app.listen(port, () => {

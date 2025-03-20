@@ -1,18 +1,17 @@
 import express from "express";
 import {
-  getAll,
-  getApplicationById,
-  createApplication,
-  updateApplication,
-  destroyApplicationById,
+  getAllApplications,
+  applyForVacancy,
+  updateApplicationStatus,
+  destroyApplication,
 } from "../controllers/ApplicationsController";
 
 const router = express.Router();
 
-router.get("/applications", getAll);
-router.get("/applications/:id", getApplicationById);
-router.post("/applications", createApplication);
-router.put("/applications/:id", updateApplication);
-router.delete("/applications/:id", destroyApplicationById);
+router.post("/applications", applyForVacancy);
+
+router.get("/applications", getAllApplications);
+router.put("/applications/:id", updateApplicationStatus);
+router.delete("/applications/:id", destroyApplication);
 
 export default router;

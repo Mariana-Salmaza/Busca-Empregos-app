@@ -2,6 +2,7 @@ import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
 import ApplicationsModel from "./ApplicationsModel";
 import FavoritesModel from "./FavoritesModel";
+import UsersModel from "./UserModel";
 
 class VacanciesModel extends Model {
   id: number | undefined;
@@ -9,7 +10,7 @@ class VacanciesModel extends Model {
   description: string | undefined;
   location: string | undefined;
   salary: number | undefined;
-  company_id: number | undefined;
+  user_id: number | undefined;
 }
 
 VacanciesModel.init(
@@ -35,9 +36,10 @@ VacanciesModel.init(
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
-    company_id: {
+    user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: { model: UsersModel, key: "id" },
     },
   },
   {

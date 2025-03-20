@@ -5,7 +5,6 @@ class FavoritesModel extends Model {
   id: number | undefined;
   user_id: number | undefined;
   vacancy_id: number | undefined;
-  saved_at: Date | undefined;
 }
 
 FavoritesModel.init(
@@ -22,11 +21,6 @@ FavoritesModel.init(
     vacancy_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
-    },
-    saved_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
     },
   },
   {

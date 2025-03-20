@@ -4,13 +4,19 @@ import {
   getAll,
   getUserById,
   updateUser,
+  destroyUserById,
 } from "../controllers/UserController";
+import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
-router.get("/users", getAll);
-router.get("/users/:id", getUserById);
+// Rota pública
 router.post("/users", createUser);
-router.put("/users/:id", updateUser);
+
+// Rotas privadas
+router.get("/users", authMiddleware, getAll);
+router.get("/users/:id", authMiddleware, getUserById);
+router.put("/users/:id", authMiddleware, updateUser);
+router.delete("/users/:id", authMiddleware, destroyUserById);
 
 export default router;
