@@ -1,8 +1,34 @@
 import { Request, Response } from "express";
 import UserModel from "../model/UserModel";
-import { Error } from "sequelize";
+import bcrypt from "bcrypt";
+import { generateToken } from "../utils/jwt";
 
-// Buscar todos os usuários
+// Função para validar e-mail com regex
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+// Função para validar CPF
+const isValidCPF = (cpf: string): boolean => {
+  cpf = cpf.replace(/[^\d]/g, "");
+  if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+
+  let sum = 0;
+  let rest;
+
+  for (let i = 1; i <= 9; i++) sum += parseInt(cpf[i - 1]) * (11 - i);
+  rest = (sum * 10) % 11;
+  if (rest === 10 || rest === 11) rest = 0;
+  if (rest !== parseInt(cpf[9])) return false;
+
+  sum = 0;
+  for (let i = 1; i <= 10; i++) sum += parseInt(cpf[i - 1]) * (12 - i);
+  rest = (sum * 10) % 11;
+  if (rest === 10 || rest === 11) rest = 0;
+  return rest === parseInt(cpf[10]);
+};
+
 export const getAll = async (req: Request, res: Response) => {
   try {
     const users = await UserModel.findAll();
@@ -12,7 +38,6 @@ export const getAll = async (req: Request, res: Response) => {
   }
 };
 
-// Buscar usuário por ID
 export const getUserById = async (
   req: Request<{ id: string }>,
   res: Response
@@ -28,73 +53,93 @@ export const getUserById = async (
   }
 };
 
-// Criar novo usuário
 export const createUser = async (req: Request, res: Response) => {
   try {
     const { name, email, password, CPF } = req.body;
 
-    // Validando campos obrigatórios
     if (!name || !email || !password || !CPF) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    // Verificando se o CPF já está cadastrado
-    const existingUser = await UserModel.findOne({ where: { CPF } });
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
+    }
+
+    if (!isValidCPF(CPF)) {
+      return res.status(400).json({ error: "Invalid CPF" });
+    }
+
+    const existingUser = await UserModel.findOne({ where: { email } });
     if (existingUser) {
+      return res.status(400).json({ error: "Email already registered" });
+    }
+
+    const existingCPF = await UserModel.findOne({ where: { CPF } });
+    if (existingCPF) {
       return res.status(400).json({ error: "CPF already registered" });
     }
 
-    const newUser = await UserModel.create({ name, email, password, CPF });
-    console.log("User created:", newUser);
-    res.status(201).json(newUser);
+    //const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await UserModel.create({
+      name,
+      email,
+      password,
+      CPF,
+    });
+    res
+      .status(201)
+      .json({ message: "User created successfully", user: newUser });
   } catch (error) {
-    console.error("Error creating user:", error);
-    res.status(500).json({ error: "Error creating user" });
+    res.status(500).json({ error: "Error creating user", details: error });
   }
 };
 
-// Atualizar usuário
 export const updateUser = async (
   req: Request<{ id: string }>,
   res: Response
 ) => {
   try {
-    console.log("Body received:", req.body);
+    const { name, password } = req.body;
+    const userId = req.params.id;
 
-    const { name, email, password } = req.body;
-    const loggedUser = req.body.user;
+    const authUser = (req as any).user;
 
-    console.log("Logged in user:", loggedUser);
-
-    if (!name && !email && !password) {
-      return res.status(400).json({ error: "At least one field is required" });
+    if (!authUser || authUser.id !== parseInt(userId)) {
+      return res
+        .status(403)
+        .json({ error: "You can only update your own account" });
     }
 
-    const user = await UserModel.findByPk(req.params.id);
+    const user = await UserModel.findByPk(userId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
     if (name) user.name = name;
-    if (email) user.email = email;
-    if (password) user.password = password;
-    user.updatedBy = loggedUser?.id;
+    if (password) user.password = await bcrypt.hash(password, 10);
 
     await user.save();
-    res.status(200).json(user);
+    res.status(200).json({ message: "User updated successfully", user });
   } catch (error) {
-    console.error("Error updating user:", error);
     res.status(500).json({ error: "Internal server error", details: error });
   }
 };
 
-// Excluir usuário
 export const destroyUserById = async (
   req: Request<{ id: string }>,
   res: Response
 ) => {
   try {
-    const user = await UserModel.findByPk(req.params.id);
+    const userId = req.params.id;
+
+    if (req.body.user.id !== parseInt(userId)) {
+      return res
+        .status(403)
+        .json({ error: "You can only delete your own account" });
+    }
+
+    const user = await UserModel.findByPk(userId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }

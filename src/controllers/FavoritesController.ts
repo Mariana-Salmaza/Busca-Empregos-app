@@ -3,7 +3,6 @@ import FavoritesModel from "../model/FavoritesModel";
 import VacanciesModel from "../model/VacanciesModel";
 import { error } from "console";
 
-// Buscar favoritos do usuário autenticado, incluindo detalhes da vaga
 export const getAllFavorites = async (req: Request, res: Response) => {
   try {
     const favorites = await FavoritesModel.findAll({
@@ -22,7 +21,6 @@ export const getAllFavorites = async (req: Request, res: Response) => {
   }
 };
 
-// Criar um favorito
 export const addFavorite = async (req: Request, res: Response) => {
   try {
     const { user_id, vacancy_id } = req.body;
@@ -30,14 +28,10 @@ export const addFavorite = async (req: Request, res: Response) => {
     if (!user_id || !vacancy_id) {
       return res.status(400).json({ error: "Values required" });
     }
-
-    // Verificar se a vaga existe
     const vacancy = await VacanciesModel.findByPk(vacancy_id);
     if (!vacancy) {
       return res.status(404).json({ error: "Vacancy not found" });
     }
-
-    // Verificar se já existe um favorito para esse usuário e essa vaga
     const existingFavorite = await FavoritesModel.findOne({
       where: { user_id, vacancy_id },
     });
@@ -46,7 +40,6 @@ export const addFavorite = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Vacancy already favorited" });
     }
 
-    // Criar o favorito
     const favorite = await FavoritesModel.create({ user_id, vacancy_id });
     res.status(201).json(favorite);
   } catch (error) {
@@ -54,7 +47,6 @@ export const addFavorite = async (req: Request, res: Response) => {
   }
 };
 
-// Remover favorito
 export const destroyFavorite = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -64,7 +56,6 @@ export const destroyFavorite = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "User ID is required" });
     }
 
-    // Buscar o favorito pelo ID e validar se pertence ao usuário correto
     const favorite = await FavoritesModel.findOne({
       where: { id, user_id },
     });

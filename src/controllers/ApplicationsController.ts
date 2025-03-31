@@ -3,7 +3,6 @@ import ApplicationsModel from "../model/ApplicationsModel";
 import UserModel from "../model/UserModel";
 import VacancyModel from "../model/VacanciesModel";
 
-// Buscar todas as candidaturas
 export const getAllApplications = async (req: Request, res: Response) => {
   try {
     const applications = await ApplicationsModel.findAll({
@@ -18,7 +17,6 @@ export const getAllApplications = async (req: Request, res: Response) => {
   }
 };
 
-// Criar candidatura
 export const applyForVacancy = async (req: Request, res: Response) => {
   try {
     const { user_id, vacancy_id, status } = req.body;
@@ -29,7 +27,6 @@ export const applyForVacancy = async (req: Request, res: Response) => {
         .json({ success: false, message: "All fields are required" });
     }
 
-    // Verifica se usuário e vaga existem em uma única consulta para otimizar performance
     const [user, vacancy] = await Promise.all([
       UserModel.findByPk(user_id),
       VacancyModel.findByPk(vacancy_id),
@@ -44,7 +41,6 @@ export const applyForVacancy = async (req: Request, res: Response) => {
         .status(404)
         .json({ success: false, message: "Vacancy not found" });
 
-    // Verifica se já existe uma candidatura para essa vaga
     const existingApplication = await ApplicationsModel.findOne({
       where: { user_id, vacancy_id },
     });
@@ -54,8 +50,6 @@ export const applyForVacancy = async (req: Request, res: Response) => {
         message: "Application already exists for this vacancy",
       });
     }
-
-    // Criação da candidatura
     const application = await ApplicationsModel.create({
       user_id,
       vacancy_id,
@@ -74,7 +68,6 @@ export const applyForVacancy = async (req: Request, res: Response) => {
   }
 };
 
-// Atualizar status da candidatura
 export const updateApplicationStatus = async (req: Request, res: Response) => {
   try {
     const { status } = req.body;
@@ -108,7 +101,6 @@ export const updateApplicationStatus = async (req: Request, res: Response) => {
   }
 };
 
-// Remover candidatura
 export const destroyApplication = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

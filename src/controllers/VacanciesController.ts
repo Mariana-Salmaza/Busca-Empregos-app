@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import VacanciesModel from "../model/VacanciesModel";
 
-// Buscar todas as vagas
 export const getAllVacancies = async (req: Request, res: Response) => {
   try {
     const vacancies = await VacanciesModel.findAll();
@@ -11,7 +10,6 @@ export const getAllVacancies = async (req: Request, res: Response) => {
   }
 };
 
-// Buscar vaga por ID
 export const getVacancyById = async (
   req: Request<{ id: string }>,
   res: Response
@@ -27,7 +25,6 @@ export const getVacancyById = async (
   }
 };
 
-// Criar nova vaga
 export const createVacancy = async (req: Request, res: Response) => {
   try {
     const { title, description, salary, location, user_id } = req.body;
@@ -51,7 +48,6 @@ export const createVacancy = async (req: Request, res: Response) => {
   }
 };
 
-// Atualizar vaga
 export const updateVacancy = async (
   req: Request<{ id: string }>,
   res: Response
@@ -82,7 +78,6 @@ export const updateVacancy = async (
   }
 };
 
-// Excluir vaga
 export const destroyVacancyById = async (
   req: Request<{ id: string }>,
   res: Response

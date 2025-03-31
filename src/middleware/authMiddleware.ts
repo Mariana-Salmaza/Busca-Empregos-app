@@ -4,14 +4,12 @@ import { verifyToken } from "../utils/jwt";
 export const authMiddleware = (
   req: Request,
   res: Response,
-
-  // passa para a função da frente
   next: NextFunction
 ) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
-    return res.status(401).json({ error: "Access denied. No token" });
+    return res.status(401).json({ error: "Access denied. No token provided" });
   }
 
   try {
@@ -19,8 +17,6 @@ export const authMiddleware = (
     req.body.user = decoded;
     next();
   } catch (error) {
-    return res
-      .status(401)
-      .json({ msg: "Access denied. Invalid token" + error });
+    return res.status(401).json({ error: "Access denied. Invalid token" });
   }
 };
