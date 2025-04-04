@@ -1,105 +1,81 @@
 import { Request, Response } from "express";
 import VacanciesModel from "../model/VacanciesModel";
 
+export const createVacancy = async (req: Request, res: Response) => {
+  try {
+    const { title, description, location, salary, user_id } = req.body;
+    const newVacancy = await VacanciesModel.create({
+      title,
+      description,
+      location,
+      salary,
+      user_id,
+    });
+    res.status(201).json(newVacancy);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao criar a vaga" });
+  }
+};
+
 export const getAllVacancies = async (req: Request, res: Response) => {
   try {
     const vacancies = await VacanciesModel.findAll();
-    return res.status(200).json(vacancies);
+    res.status(200).json(vacancies);
   } catch (error) {
-    console.error("Error fetching vacancies:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error(error);
+    res.status(500).json({ error: "Erro ao buscar vagas" });
   }
 };
 
-export const getVacancyById = async (
-  req: Request<{ id: string }>,
-  res: Response
-) => {
+export const getVacancyById = async (req: Request, res: Response) => {
+  const { id } = req.params;
   try {
-    const vacancy = await VacanciesModel.findByPk(req.params.id);
+    const vacancy = await VacanciesModel.findByPk(id);
     if (!vacancy) {
-      return res.status(404).json({ error: "Vacancy not found" });
+      return res.status(404).json({ error: "Vaga não encontrada" });
     }
-    return res.status(200).json(vacancy);
+    res.status(200).json(vacancy);
   } catch (error) {
-    console.error("Error fetching vacancy:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error(error);
+    res.status(500).json({ error: "Erro ao buscar vaga" });
   }
 };
 
-export const createVacancy = async (req: Request, res: Response) => {
+export const updateVacancy = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { title, description, location, salary, user_id } = req.body;
   try {
-    const { title, description, salary, location, user_id } = req.body;
-
-    if (!user_id) {
-      return res.status(401).json({ error: "User not authenticated!" });
-    }
-
-    if (!title || !description || !salary || !location) {
-      return res.status(400).json({ error: "All fields are required" });
-    }
-
-    const vacancy = await VacanciesModel.create({
-      title,
-      description,
-      salary: parseFloat(salary),
-      location,
-      user_id,
-    });
-
-    return res.status(201).json(vacancy);
-  } catch (error) {
-    console.error("Error creating vacancy:", error);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-export const updateVacancy = async (
-  req: Request<{ id: string }>,
-  res: Response
-) => {
-  try {
-    const { title, description, location, salary, user_id } = req.body;
-
-    if (!title && !description && !location && !salary && !user_id) {
-      return res
-        .status(400)
-        .json({ error: "At least one field is required for update" });
-    }
-
-    const vacancy = await VacanciesModel.findByPk(req.params.id);
+    const vacancy = await VacanciesModel.findByPk(id);
     if (!vacancy) {
-      return res.status(404).json({ error: "Vacancy not found" });
+      return res.status(404).json({ error: "Vaga não encontrada" });
     }
 
-    if (title) vacancy.title = title;
-    if (description) vacancy.description = description;
-    if (location) vacancy.location = location;
-    if (salary) vacancy.salary = parseFloat(salary);
-    if (user_id) vacancy.user_id = user_id;
+    vacancy.title = title || vacancy.title;
+    vacancy.description = description || vacancy.description;
+    vacancy.location = location || vacancy.location;
+    vacancy.salary = salary || vacancy.salary;
+    vacancy.user_id = user_id || vacancy.user_id;
 
     await vacancy.save();
-    return res.status(200).json(vacancy);
+    res.status(200).json(vacancy);
   } catch (error) {
-    console.error("Error updating vacancy:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error(error);
+    res.status(500).json({ error: "Erro ao atualizar vaga" });
   }
 };
 
-export const destroyVacancyById = async (
-  req: Request<{ id: string }>,
-  res: Response
-) => {
+export const destroyVacancy = async (req: Request, res: Response) => {
+  const { id } = req.params;
   try {
-    const vacancy = await VacanciesModel.findByPk(req.params.id);
+    const vacancy = await VacanciesModel.findByPk(id);
     if (!vacancy) {
-      return res.status(404).json({ error: "Vacancy not found" });
+      return res.status(404).json({ error: "Vaga não encontrada" });
     }
-
     await vacancy.destroy();
-    return res.status(200).json({ message: "Vacancy deleted successfully" });
+    res.status(200).json({ message: "Vaga deletada com sucesso" });
   } catch (error) {
-    console.error("Error deleting vacancy:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error(error);
+    res.status(500).json({ error: "Erro ao deletar vaga" });
   }
 };

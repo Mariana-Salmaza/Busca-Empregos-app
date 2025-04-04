@@ -4,16 +4,16 @@ import {
   getVacancyById,
   createVacancy,
   updateVacancy,
-  destroyVacancyById,
+  destroyVacancy,
 } from "../controllers/VacanciesController";
 import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
-router.get("/api/vacancies", getAllVacancies);
-router.get("/api/vacancies/:id", getVacancyById);
-router.post("/api/vacancies", authMiddleware, createVacancy);
-router.put("/api/vacancies/:id", authMiddleware, updateVacancy);
-router.delete("/api/vacancies/:id", authMiddleware, destroyVacancyById);
+router.post("/vacancies", authMiddleware, createVacancy);
+router.get("/vacancies", getAllVacancies);
+router.get("/vacancies/:id", getVacancyById);
+router.put("/vacancies/:id", authMiddleware, updateVacancy);
+router.delete("/vacancies/:id", authMiddleware, destroyVacancy);
 
 export default router;
