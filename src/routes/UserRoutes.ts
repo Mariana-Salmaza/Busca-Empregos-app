@@ -10,13 +10,10 @@ import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
-// Rota pública
-router.post("/users", createUser);
-
-// Rotas privadas
-router.get("/users", authMiddleware, getAll);
-router.get("/users/:id", authMiddleware, getUserById);
-router.put("/users/:id", authMiddleware, updateUser);
-router.delete("/users/:id", authMiddleware, destroyUserById);
+router.post("/api/users", createUser);
+router.get("/api/users", authMiddleware, getAll);
+router.get("/api/users/:id", authMiddleware, getUserById);
+router.put("/api/users/:id", authMiddleware, updateUser);
+router.delete("/api/users/:id", authMiddleware, destroyUserById);
 
 export default router;

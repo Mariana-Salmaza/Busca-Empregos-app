@@ -1,17 +1,19 @@
 import express from "express";
+import cors from "cors";
 import sequelize from "./config/database";
-import userRoutes from "./routes/UserRoutes";
 import VacanciesRoutes from "./routes/VacanciesRoutes";
 import FavoritesRoutes from "./routes/FavoritesRoutes";
 import ApplicationsRoutes from "./routes/ApplicationsRoutes";
 import LoginRoutes from "./routes/LoginRoutes";
+import UserRoutes from "./routes/UserRoutes";
 
 const app = express();
 const port = 3000;
 
+app.use(cors());
 app.use(express.json());
 
-app.use(userRoutes);
+app.use(UserRoutes);
 app.use(VacanciesRoutes);
 app.use(FavoritesRoutes);
 app.use(ApplicationsRoutes);

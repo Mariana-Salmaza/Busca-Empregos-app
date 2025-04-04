@@ -79,14 +79,14 @@ export const createUser = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "CPF already registered" });
     }
 
-    //const hashedPassword = await bcrypt.hash(password, 10);
-
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await UserModel.create({
       name,
       email,
-      password,
+      password: hashedPassword,
       CPF,
     });
+
     res
       .status(201)
       .json({ message: "User created successfully", user: newUser });

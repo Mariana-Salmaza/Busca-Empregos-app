@@ -5,13 +5,13 @@ import {
   updateApplicationStatus,
   destroyApplication,
 } from "../controllers/ApplicationsController";
+import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
-router.post("/applications", applyForVacancy);
-
-router.get("/applications", getAllApplications);
-router.put("/applications/:id", updateApplicationStatus);
-router.delete("/applications/:id", destroyApplication);
+router.get("/api/applications", authMiddleware, getAllApplications);
+router.post("/api/applications", authMiddleware, applyForVacancy);
+router.put("/api/applications/:id", authMiddleware, updateApplicationStatus);
+router.delete("/api/applications/:id", authMiddleware, destroyApplication);
 
 export default router;

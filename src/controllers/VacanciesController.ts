@@ -4,9 +4,10 @@ import VacanciesModel from "../model/VacanciesModel";
 export const getAllVacancies = async (req: Request, res: Response) => {
   try {
     const vacancies = await VacanciesModel.findAll();
-    res.json(vacancies);
+    return res.status(200).json(vacancies);
   } catch (error) {
-    res.status(500).json({ error: "Internal server error", details: error });
+    console.error("Error fetching vacancies:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -19,9 +20,10 @@ export const getVacancyById = async (
     if (!vacancy) {
       return res.status(404).json({ error: "Vacancy not found" });
     }
-    res.json(vacancy);
+    return res.status(200).json(vacancy);
   } catch (error) {
-    res.status(500).json({ error: "Internal server error", details: error });
+    console.error("Error fetching vacancy:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -30,13 +32,17 @@ export const createVacancy = async (req: Request, res: Response) => {
     const { title, description, salary, location, user_id } = req.body;
 
     if (!user_id) {
-      return res.status(400).json({ message: "User not authenticated!" });
+      return res.status(401).json({ error: "User not authenticated!" });
+    }
+
+    if (!title || !description || !salary || !location) {
+      return res.status(400).json({ error: "All fields are required" });
     }
 
     const vacancy = await VacanciesModel.create({
       title,
       description,
-      salary,
+      salary: parseFloat(salary),
       location,
       user_id,
     });
@@ -44,7 +50,7 @@ export const createVacancy = async (req: Request, res: Response) => {
     return res.status(201).json(vacancy);
   } catch (error) {
     console.error("Error creating vacancy:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -56,7 +62,9 @@ export const updateVacancy = async (
     const { title, description, location, salary, user_id } = req.body;
 
     if (!title && !description && !location && !salary && !user_id) {
-      return res.status(400).json({ error: "At least one field is required" });
+      return res
+        .status(400)
+        .json({ error: "At least one field is required for update" });
     }
 
     const vacancy = await VacanciesModel.findByPk(req.params.id);
@@ -67,14 +75,14 @@ export const updateVacancy = async (
     if (title) vacancy.title = title;
     if (description) vacancy.description = description;
     if (location) vacancy.location = location;
-    if (salary) vacancy.salary = salary;
+    if (salary) vacancy.salary = parseFloat(salary);
     if (user_id) vacancy.user_id = user_id;
 
     await vacancy.save();
-    res.status(200).json(vacancy);
+    return res.status(200).json(vacancy);
   } catch (error) {
     console.error("Error updating vacancy:", error);
-    res.status(500).json({ error: "Internal server error", details: error });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -87,9 +95,11 @@ export const destroyVacancyById = async (
     if (!vacancy) {
       return res.status(404).json({ error: "Vacancy not found" });
     }
+
     await vacancy.destroy();
-    res.status(204).send();
+    return res.status(200).json({ message: "Vacancy deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Internal server error", details: error });
+    console.error("Error deleting vacancy:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
