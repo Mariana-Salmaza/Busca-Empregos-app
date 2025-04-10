@@ -4,14 +4,12 @@ import UserModel from "../model/UserModel";
 const JWT_SECRET = process.env.JWT_SECRET || "token_de_acesso_JWT";
 const JWT_EXPIRES_IN = "7d";
 
-// Função para gerar o token
 export const generateToken = (user: UserModel): string => {
   return jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
     expiresIn: JWT_EXPIRES_IN,
   });
 };
 
-// Função para verificar o token
 export const verifyToken = (
   token: string
 ): { id: string; email: string } | null => {

@@ -11,8 +11,8 @@ import { authMiddleware } from "../middleware/authMiddleware";
 const router = express.Router();
 
 router.post("/applications", authMiddleware, createApplication);
-router.get("/applications", getAllApplications);
-router.get("/applications/:id", getApplicationById);
+router.get("/applications", authMiddleware, getAllApplications);
+router.get("/applications/:id", authMiddleware, getApplicationById);
 router.put("/applications/:id", authMiddleware, updateApplication);
 router.delete("/applications/:id", authMiddleware, destroyApplication);
 

@@ -56,7 +56,11 @@ UserModel.init(
     indexes: [
       {
         unique: true,
-        fields: ["email", "CPF"],
+        fields: ["email"],
+      },
+      {
+        unique: true,
+        fields: ["CPF"],
       },
     ],
   }
@@ -82,8 +86,10 @@ FavoritesModel.belongsTo(UserModel, {
   as: "user",
 });
 
-UserModel.beforeCreate(async (user: UserModel) => {
-  await user.hashPassword();
+UserModel.beforeCreate(async (user) => {
+  if (user.password) {
+    user.password = await bcrypt.hash(user.password, 10);
+  }
 });
 
 UserModel.beforeUpdate(async (user: UserModel) => {

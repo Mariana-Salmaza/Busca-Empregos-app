@@ -31,12 +31,12 @@ export const getApplicationById = async (req: Request, res: Response) => {
   try {
     const application = await ApplicationsModel.findByPk(id);
     if (!application) {
-      return res.status(404).json({ error: "Candidatura não encontrada" });
+      return res.status(404).json({ error: "Candidatura não encontrada." });
     }
     res.status(200).json(application);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao buscar candidatura" });
+    res.status(500).json({ error: "Erro ao buscar candidatura." });
   }
 };
 
@@ -46,7 +46,7 @@ export const updateApplication = async (req: Request, res: Response) => {
   try {
     const application = await ApplicationsModel.findByPk(id);
     if (!application) {
-      return res.status(404).json({ error: "Candidatura não encontrada" });
+      return res.status(404).json({ error: "Candidatura não encontrada." });
     }
 
     application.status = status || application.status;
@@ -55,7 +55,7 @@ export const updateApplication = async (req: Request, res: Response) => {
     res.status(200).json(application);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao atualizar candidatura" });
+    res.status(500).json({ error: "Erro ao atualizar candidatura." });
   }
 };
 
@@ -64,12 +64,12 @@ export const destroyApplication = async (req: Request, res: Response) => {
   try {
     const application = await ApplicationsModel.findByPk(id);
     if (!application) {
-      return res.status(404).json({ error: "Candidatura não encontrada" });
+      return res.status(404).json({ error: "Candidatura não encontrada." });
     }
     await application.destroy();
-    res.status(200).json({ message: "Candidatura deletada com sucesso" });
+    res.status(200).json({ message: "Candidatura deletada com sucesso." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao deletar candidatura" });
+    res.status(500).json({ error: "Erro ao deletar candidatura." });
   }
 };

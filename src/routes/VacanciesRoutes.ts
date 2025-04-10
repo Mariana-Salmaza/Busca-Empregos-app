@@ -5,15 +5,17 @@ import {
   createVacancy,
   updateVacancy,
   destroyVacancy,
+  getAllUserVacancies,
 } from "../controllers/VacanciesController";
 import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
-router.post("/vacancies", authMiddleware, createVacancy);
-router.get("/vacancies", getAllVacancies);
-router.get("/vacancies/:id", getVacancyById);
-router.put("/vacancies/:id", authMiddleware, updateVacancy);
-router.delete("/vacancies/:id", authMiddleware, destroyVacancy);
+router.post("/", authMiddleware, createVacancy);
+router.get("/", getAllVacancies);
+router.get("/:id", authMiddleware, getVacancyById);
+router.put("/:id", authMiddleware, updateVacancy);
+router.delete("/:id", authMiddleware, destroyVacancy);
+router.get("/my/:id", authMiddleware, getAllUserVacancies);
 
 export default router;

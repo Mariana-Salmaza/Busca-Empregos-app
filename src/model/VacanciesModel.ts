@@ -2,14 +2,14 @@ import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
 import ApplicationsModel from "./ApplicationsModel";
 import FavoritesModel from "./FavoritesModel";
-import UsersModel from "./UserModel";
+import UserModel from "./UserModel";
 
 class VacanciesModel extends Model {
   id: number | undefined;
   title: string | undefined;
   description: string | undefined;
   location: string | undefined;
-  salary: number | undefined;
+  salary: string | undefined;
   user_id: number | undefined;
 }
 
@@ -33,13 +33,20 @@ VacanciesModel.init(
       allowNull: false,
     },
     salary: {
-      type: DataTypes.DECIMAL(10, 2),
+      type: DataTypes.STRING,
       allowNull: false,
+      set(value: string | number) {
+        if (typeof value === "number") {
+          this.setDataValue("salary", value.toString());
+        } else {
+          this.setDataValue("salary", value);
+        }
+      },
     },
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { model: UsersModel, key: "id" },
+      references: { model: UserModel, key: "id" },
     },
   },
   {
@@ -49,7 +56,6 @@ VacanciesModel.init(
   }
 );
 
-// Uma vaga pode ter várias candidaturas
 VacanciesModel.hasMany(ApplicationsModel, {
   foreignKey: "vacancy_id",
   as: "applications",
@@ -59,7 +65,6 @@ ApplicationsModel.belongsTo(VacanciesModel, {
   as: "vacancy",
 });
 
-// Uma vaga pode ser favoritada por vários usuários
 VacanciesModel.hasMany(FavoritesModel, {
   foreignKey: "vacancy_id",
   as: "favorites",
@@ -68,5 +73,6 @@ FavoritesModel.belongsTo(VacanciesModel, {
   foreignKey: "vacancy_id",
   as: "vacancy",
 });
+VacanciesModel.belongsTo(UserModel, { foreignKey: "user_id" });
 
 export default VacanciesModel;

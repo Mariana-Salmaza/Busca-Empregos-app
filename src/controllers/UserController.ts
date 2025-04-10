@@ -2,14 +2,13 @@ import { Request, Response } from "express";
 import UserModel from "../model/UserModel";
 import bcrypt from "bcrypt";
 import { generateToken } from "../utils/jwt";
+import { AuthenticatedRequest, AuthenticatedUser } from "../types/custom";
 
-// Função para validar e-mail com regex
 const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
-// Função para validar CPF
 const isValidCPF = (cpf: string): boolean => {
   cpf = cpf.replace(/[^\d]/g, "");
   if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
@@ -54,61 +53,66 @@ export const getUserById = async (
 };
 
 export const createUser = async (req: Request, res: Response) => {
+  const { name, email, password, CPF } = req.body;
+
+  if (!name || !email || !password || !CPF) {
+    return res.status(400).json({ error: "Todos os campos são obrigatórios" });
+  }
+
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ error: "Email inválido" });
+  }
+
+  if (!isValidCPF(CPF)) {
+    return res.status(400).json({ error: "CPF inválido" });
+  }
+
   try {
-    const { name, email, password, CPF } = req.body;
-
-    if (!name || !email || !password || !CPF) {
-      return res.status(400).json({ error: "All fields are required" });
-    }
-
-    if (!isValidEmail(email)) {
-      return res.status(400).json({ error: "Invalid email format" });
-    }
-
-    if (!isValidCPF(CPF)) {
-      return res.status(400).json({ error: "Invalid CPF" });
-    }
-
     const existingUser = await UserModel.findOne({ where: { email } });
+
     if (existingUser) {
-      return res.status(400).json({ error: "Email already registered" });
+      return res.status(400).json({ error: "Este email já está registrado" });
     }
 
-    const existingCPF = await UserModel.findOne({ where: { CPF } });
-    if (existingCPF) {
-      return res.status(400).json({ error: "CPF already registered" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await UserModel.create({
       name,
       email,
-      password: hashedPassword,
+      password,
       CPF,
     });
 
-    res
+    return res
       .status(201)
-      .json({ message: "User created successfully", user: newUser });
+      .json({ message: "Usuário criado com sucesso", user: newUser });
   } catch (error) {
-    res.status(500).json({ error: "Error creating user", details: error });
+    console.error(error);
+    return res.status(500).json({ error: "Erro ao criar o usuário" });
   }
 };
 
-export const updateUser = async (
-  req: Request<{ id: string }>,
-  res: Response
-) => {
+export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { name, password } = req.body;
-    const userId = req.params.id;
+    const { name, password, CPF } = req.body;
+    const userId = parseInt(req.params.id);
 
-    const authUser = (req as any).user;
+    const authUser = req.user;
 
-    if (!authUser || authUser.id !== parseInt(userId)) {
+    if (!authUser || authUser.id !== userId) {
       return res
         .status(403)
         .json({ error: "You can only update your own account" });
+    }
+
+    // esta consulta retorna um array de usuarios
+    const isValidCPF = await (
+      await UserModel.findAll({ where: { CPF: CPF } })
+    ).length;
+
+    // se o array tiver um tamanho igual a 0, significa que o CPF não está sendo usado por outro usuario
+    if (isValidCPF != 0) {
+      return res
+        .status(404)
+        .json({ error: "O CPF informado já está sendo utilizado." });
     }
 
     const user = await UserModel.findByPk(userId);
@@ -118,6 +122,7 @@ export const updateUser = async (
 
     if (name) user.name = name;
     if (password) user.password = await bcrypt.hash(password, 10);
+    if (CPF) user.CPF = CPF;
 
     await user.save();
     res.status(200).json({ message: "User updated successfully", user });

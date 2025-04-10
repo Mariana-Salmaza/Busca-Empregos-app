@@ -13,14 +13,14 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-app.use(UserRoutes);
-app.use(VacanciesRoutes);
-app.use(FavoritesRoutes);
-app.use(ApplicationsRoutes);
-app.use(LoginRoutes);
+app.use("/api/users", UserRoutes);
+app.use("/api/vacancies", VacanciesRoutes);
+app.use("/api/favorites", FavoritesRoutes);
+app.use("/api/applications", ApplicationsRoutes);
+app.use("/api/login", LoginRoutes);
 
 sequelize
-  .sync({ alter: true })
+  .sync()
   .then(() => {
     console.log("Database foi sincronizado com sucesso");
   })
