@@ -1,0 +1,39 @@
+.jobs-list-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+h1 {
+  font-size: 28px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.home-container .second-title {
+  color: back;
+  margin-top: 2%;
+}
+.error {
+  color: red;
+  font-size: 16px;
+  text-align: center;
+}
+
+.page-error {
+  margin-top: 20vh; /* <- aqui a bomba */
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .job-card {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+}

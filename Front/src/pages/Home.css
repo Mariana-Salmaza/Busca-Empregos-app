@@ -1,0 +1,66 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f4f4f4;
+  font-family: "Arial", sans-serif;
+  min-height: 100vh;
+  padding-top: 40px;
+}
+
+.home-container h2 {
+  font-size: 1.5rem;
+  color: #343a40;
+  margin-top: 10%;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.job-listing {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  width: 50vw;
+  margin-top: 30px;
+  padding: 0 15px;
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    padding: 20px;
+  }
+
+  .job-listing {
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .job-card {
+    padding: 15px;
+  }
+
+  .job-card h2 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+  }
+
+  .header button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .job-card h2 {
+    font-size: 1.2rem;
+  }
+
+  .job-card p {
+    font-size: 0.9rem;
+  }
+}

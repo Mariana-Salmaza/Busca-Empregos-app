@@ -1,0 +1,54 @@
+.job-card-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.job-card-buttons button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+  width: 48%;
+}
+
+.action-button {
+  background-color: #28a745;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.action-button:hover {
+  background-color: #218838;
+}
+
+.action-button:disabled {
+  background-color: #ccc;
+}
+
+/* .delete-button {
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #ccc;
+  font-weight: bold;
+}
+
+.delete-button:hover {
+  background-color: #0056b3;
+} */
+
+.cancel-button {
+  background-color: white;
+  color: #007bff;
+  border: 1px solid #007bff !important;
+  font-weight: bold;
+}
+
+.cancel-button:hover {
+  background-color: #e9e9e9;
+  color: #007bff;
+  font-weight: bold;
+}

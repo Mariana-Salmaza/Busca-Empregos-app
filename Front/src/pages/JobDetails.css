@@ -1,0 +1,121 @@
+.job-details-container {
+  padding: 40px;
+  background: linear-gradient(to bottom right, #ffffff, #f9f9f9);
+  max-width: 900px;
+  margin: 40px auto;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  font-family: "Segoe UI", sans-serif;
+}
+
+h1 {
+  font-size: 34px;
+  color: #1a1a1a;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.job-summary {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.job-summary p {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  color: #444;
+  margin: 8px 0;
+}
+
+.job-description {
+  margin-top: 30px;
+}
+
+.job-description h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.job-description p {
+  font-size: 1.2rem;
+  color: #444;
+  line-height: 1.8;
+  text-align: justify;
+  padding: 0 15px;
+}
+
+.job-extra-info {
+  background-color: #eef3ff;
+  border-left: 6px solid #007bff;
+  padding: 20px;
+  margin-top: 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.job-extra-info p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.job-rating {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.job-rating h3 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.stars svg {
+  color: #ffd700;
+  font-size: 22px;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 40px;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 26px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  font-size: 16px;
+  margin-top: 40px;
+}

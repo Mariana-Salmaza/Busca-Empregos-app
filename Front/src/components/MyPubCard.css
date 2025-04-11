@@ -1,0 +1,28 @@
+.my-pub-card {
+  overflow-x: hidden;
+}
+
+.mypub-card-details-button {
+  padding: 0.6rem 0.8rem;
+}
+
+.mypub-card-edit-button {
+  padding: 0.6rem 0.8rem;
+}
+
+.mypub-card-del-button {
+  padding: 0.6rem 0.8rem;
+}
+
+.delete-button {
+  background-color: white;
+  color: #e23030;
+  border: 1px solid #e23030 !important;
+  font-weight: bold;
+}
+
+.delete-button:hover {
+  background-color: #e4d7d7;
+  color: #e23030;
+  font-weight: bold;
+}

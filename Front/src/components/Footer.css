@@ -1,0 +1,39 @@
+.footer {
+  background-color: #333;
+  color: white;
+  padding: 20px 0;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.footer .footer-links {
+  list-style-type: none;
+  padding: 0;
+}
+
+.footer .footer-links li {
+  display: inline-block;
+  margin: 0 10px;
+}
+
+.footer .footer-links li a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.footer .footer-links li a:hover {
+  text-decoration: underline;
+}
+
+.footer .footer-info {
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .footer .footer-links li {
+    display: block;
+    margin-bottom: 10px;
+  }
+}
