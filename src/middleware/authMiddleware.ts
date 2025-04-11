@@ -11,7 +11,7 @@ export const authMiddleware = (
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
-    return res.status(401).json({ error: "Access denied. No token provided" });
+    return res.status(401).json({ error: "Token não fornecido" });
   }
 
   try {
@@ -22,6 +22,6 @@ export const authMiddleware = (
     req.user = decoded;
     next();
   } catch (error) {
-    return res.status(401).json({ error: "Access denied. Invalid token" });
+    return res.status(401).json({ error: "Token inválido" });
   }
 };

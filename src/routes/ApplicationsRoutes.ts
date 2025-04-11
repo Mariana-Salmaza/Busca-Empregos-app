@@ -10,10 +10,10 @@ import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
-router.post("/applications", authMiddleware, createApplication);
-router.get("/applications", authMiddleware, getAllApplications);
-router.get("/applications/:id", authMiddleware, getApplicationById);
-router.put("/applications/:id", authMiddleware, updateApplication);
-router.delete("/applications/:id", authMiddleware, destroyApplication);
+router.post("/", authMiddleware, createApplication);
+router.get("/", authMiddleware, getAllApplications);
+router.get("/:id", authMiddleware, getApplicationById);
+router.put("/:id", authMiddleware, updateApplication);
+router.delete("/:id", authMiddleware, destroyApplication);
 
 export default router;

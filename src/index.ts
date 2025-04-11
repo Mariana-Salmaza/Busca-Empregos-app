@@ -1,33 +1,20 @@
-import express from "express";
-import cors from "cors";
+import app from "./app";
 import sequelize from "./config/database";
-import VacanciesRoutes from "./routes/VacanciesRoutes";
-import FavoritesRoutes from "./routes/FavoritesRoutes";
-import ApplicationsRoutes from "./routes/ApplicationsRoutes";
-import LoginRoutes from "./routes/LoginRoutes";
-import UserRoutes from "./routes/UserRoutes";
+import dotenv from "dotenv";
 
-const app = express();
-const port = 3000;
+dotenv.config();
 
-app.use(cors());
-app.use(express.json());
-
-app.use("/api/users", UserRoutes);
-app.use("/api/vacancies", VacanciesRoutes);
-app.use("/api/favorites", FavoritesRoutes);
-app.use("/api/applications", ApplicationsRoutes);
-app.use("/api/login", LoginRoutes);
+const port = process.env.PORT || 3000;
 
 sequelize
   .sync()
   .then(() => {
     console.log("Database foi sincronizado com sucesso");
+
+    app.listen(port, () => {
+      console.log(`Servidor rodando em http://localhost:${port}`);
+    });
   })
   .catch((error) => {
-    console.log("Erro na sincronização", error);
+    console.error("Erro ao sincronizar o banco de dados:", error);
   });
-
-app.listen(port, () => {
-  console.log("Server is running on port", port);
-});
