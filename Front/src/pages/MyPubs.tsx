@@ -39,7 +39,7 @@ const MyPubs = () => {
 
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/vacancies/my/${id}`,
+          `http://localhost:3000/vacancies/my/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

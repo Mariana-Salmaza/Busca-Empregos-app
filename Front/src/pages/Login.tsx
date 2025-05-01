@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Login.css";
 import axios from "axios";
+import { useAuth } from "../contexts/AuthContext";
 
 interface AuthResponse {
   token: string;
@@ -9,6 +10,8 @@ interface AuthResponse {
 }
 
 const Login = () => {
+  const { login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -28,11 +31,11 @@ const Login = () => {
 
     try {
       const response = await axios.post<AuthResponse>(
-        "http://localhost:3000/api/login",
+        "http://localhost:3000/login",
         { email, password }
       );
 
-      localStorage.setItem("authToken", response.data.token);
+      login(response.data.token);
       localStorage.setItem("userId", response.data.userId);
       navigate("/home");
     } catch (err) {

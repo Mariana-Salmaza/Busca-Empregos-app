@@ -18,6 +18,7 @@ const Home = () => {
   const [vacancies, setVacancies] = useState<Vacancy[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showAllVacancies, setShowAllVacancies] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -29,7 +30,7 @@ const Home = () => {
     const fetchVacancies = async () => {
       try {
         const response = await axios.get<Vacancy[]>(
-          "http://localhost:3000/api/vacancies"
+          "http://localhost:3000/vacancies"
         );
         setVacancies(response.data);
       } catch (error) {
@@ -55,31 +56,53 @@ const Home = () => {
     console.error("Erro na requisição:", error);
   };
 
+  const handleShowAllVacancies = () => {
+    setShowAllVacancies(true);
+  };
+
   return (
-    <div className="home-container">
-      <Header />
+    <>
+      <div className="home-container">
+        <Header />
 
-      <h2>Vagas Recentes</h2>
-      <section className="job-listing">
-        {loading && <p>Carregando vagas...</p>}
-        {error && <p className="error">{error}</p>}
+        <h2>Vagas Recentes</h2>
 
-        {!loading && vacancies.length === 0 ? (
-          <p>Nenhuma vaga encontrada.</p>
-        ) : (
-          vacancies.map((vacancy) => (
-            <JobCard
-              key={vacancy.id}
-              id={vacancy.id}
-              title={vacancy.title}
-              location={vacancy.location}
-              salary={vacancy.salary}
-              description={vacancy.description}
-            />
-          ))
-        )}
-      </section>
-    </div>
+        <section className="job-listing">
+          {loading && <p>Carregando vagas...</p>}
+          {error && <p className="error">{error}</p>}
+
+          {!loading && vacancies.length === 0 ? (
+            <p>Nenhuma vaga encontrada.</p>
+          ) : (
+            <>
+              {(showAllVacancies ? vacancies : vacancies.slice(0, 6)).map(
+                (vacancy) => (
+                  <JobCard
+                    key={vacancy.id}
+                    id={vacancy.id}
+                    title={vacancy.title}
+                    location={vacancy.location}
+                    salary={vacancy.salary}
+                    description={vacancy.description}
+                  />
+                )
+              )}
+
+              {!showAllVacancies && vacancies.length > 6 && (
+                <div className="show-more-container">
+                  <button
+                    className="show-more-btn"
+                    onClick={handleShowAllVacancies}
+                  >
+                    Ver mais vagas
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </section>
+      </div>
+    </>
   );
 };
 

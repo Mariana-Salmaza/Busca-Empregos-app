@@ -45,7 +45,7 @@ function Register() {
     }
 
     try {
-      await axios.post("http://localhost:3000/api/users", {
+      await axios.post("http://localhost:3000/users", {
         name,
         CPF,
         email,

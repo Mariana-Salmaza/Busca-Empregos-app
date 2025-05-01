@@ -36,7 +36,7 @@ const JobDetails = () => {
     const fetchJobDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/vacancies/${id}`,
+          `http://localhost:3000/vacancies/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

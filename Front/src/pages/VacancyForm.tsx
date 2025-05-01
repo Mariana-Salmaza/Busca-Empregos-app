@@ -33,7 +33,7 @@ function VacancyForm() {
 
     try {
       await axios.post(
-        "http://localhost:3000/api/vacancies",
+        "http://localhost:3000/vacancies",
         {
           user_id,
           title,

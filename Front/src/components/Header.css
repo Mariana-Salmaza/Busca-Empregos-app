@@ -1,7 +1,6 @@
 .header {
   display: flex;
   justify-content: space-between;
-  text-align: center;
   align-items: center;
   padding: 25px 100px;
   background-color: #007bff;
@@ -11,6 +10,11 @@
   width: 100%;
   height: 13vh;
   z-index: 10;
+  transition: background-color 0.3s ease;
+}
+
+.header:hover {
+  background-color: #0056b3;
 }
 
 .header button {
@@ -21,16 +25,13 @@
   border-radius: 5px;
   font-size: 1rem;
   cursor: pointer;
-  transition: 0.3s;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .header button:hover {
   background-color: #0056b3;
   color: white;
-}
-
-.header button:focus {
-  outline: 3px solid #0056b3;
+  transform: scale(1.05);
 }
 
 .logo-link {
@@ -39,7 +40,7 @@
   color: white;
   text-decoration: none;
   margin-left: 3vw;
-  font-family: "Arial", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .nav {
@@ -59,43 +60,10 @@
   font-size: 18px;
   text-decoration: none;
   transition: color 0.3s ease;
-  font-family: "Arial", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: bold;
 }
 
 .nav-link:hover {
   color: #ccc;
-}
-
-@media (max-width: 768px) {
-  .header {
-    padding: 15px;
-  }
-
-  .logo-link {
-    font-size: 28px;
-  }
-
-  .nav ul {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .nav-link {
-    font-size: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .header {
-    padding: 10px;
-  }
-
-  .logo-link {
-    font-size: 24px;
-  }
-
-  .nav-link {
-    font-size: 14px;
-  }
 }

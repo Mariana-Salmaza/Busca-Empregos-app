@@ -4,7 +4,6 @@ import {
   Route,
   Outlet,
 } from "react-router-dom";
-import Home from "./pages/Home";
 import Login from "./pages/Login";
 import JobsList from "./pages/JobsList";
 import JobDetails from "./pages/JobDetails";
@@ -13,6 +12,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import MyPubs from "./pages/MyPubs";
 import VacancyForm from "./pages/VacancyForm";
 import EditVacancyForm from "./pages/EditVacancyForm";
+import Home from "./pages/Home";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           element={
             <PrivateRoute>
               <Outlet />
+              <Footer />
             </PrivateRoute>
           }
         >

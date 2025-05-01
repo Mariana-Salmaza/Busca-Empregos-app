@@ -38,12 +38,9 @@ const JobsList = () => {
     const fetchJobs = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          "http://localhost:3000/api/vacancies",
-          {
-            params: { search, location: locationFilter },
-          }
-        );
+        const response = await axios.get("http://localhost:3000/vacancies", {
+          params: { search, location: locationFilter },
+        });
         setJobs(response.data);
         setFilteredJobs(response.data);
       } catch (error) {

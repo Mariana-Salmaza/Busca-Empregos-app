@@ -3,9 +3,22 @@
   flex-direction: column;
   align-items: center;
   background-color: #f4f4f4;
-  font-family: "Arial", sans-serif;
+  font-family: "Poppins", sans-serif;
   min-height: 100vh;
   padding-top: 40px;
+  background-image: url("https://via.placeholder.com/1500x800");
+  background-size: cover;
+  background-position: center;
+  animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .home-container h2 {
@@ -15,15 +28,41 @@
   margin-bottom: 10px;
   text-align: center;
   font-weight: bold;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .job-listing {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
-  width: 50vw;
+  gap: 30px;
+  width: 60vw;
   margin-top: 30px;
   padding: 0 15px;
+}
+
+.job-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.show-more-container {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.show-more-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px 10px;
+  text-decoration: underline;
+}
+
+.show-more-btn:hover {
+  background: none;
+  color: #0056b3;
 }
 
 @media (max-width: 768px) {

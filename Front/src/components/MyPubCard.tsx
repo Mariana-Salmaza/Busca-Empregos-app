@@ -46,7 +46,7 @@ const MyPubCard = ({
 
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/vacancies/${id}`,
+        `http://localhost:3000/vacancies/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

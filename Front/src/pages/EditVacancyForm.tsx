@@ -28,7 +28,7 @@ const EditVacancyForm = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/vacancies/${id}`,
+        `http://localhost:3000/vacancies/${id}`,
         {
           title: newTitle,
           location: newLocation,
