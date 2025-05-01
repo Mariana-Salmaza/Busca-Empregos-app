@@ -12,10 +12,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/users", UserRoutes);
-app.use("/api/vacancies", VacanciesRoutes);
-app.use("/api/favorites", FavoritesRoutes);
-app.use("/api/applications", ApplicationsRoutes);
-app.use("/api/login", LoginRoutes);
+app.use("/users", UserRoutes);
+app.use("/vacancies", VacanciesRoutes);
+app.use("/favorites", FavoritesRoutes);
+app.use("/applications", ApplicationsRoutes);
+app.use("/login", LoginRoutes);
 
 export default app;

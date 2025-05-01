@@ -24,7 +24,7 @@ describe("Restrição de edição de usuários", () => {
     const token = generateToken(user);
 
     const res = await request(app)
-      .put(`/api/users/${user.id}`)
+      .put(`/users/${user.id}`)
       .set("Authorization", `Bearer ${token}`)
       .send({ name: "Nome Atualizado" });
 
@@ -50,7 +50,7 @@ describe("Restrição de edição de usuários", () => {
     const token = generateToken(user1);
 
     const res = await request(app)
-      .put(`/api/users/${user2.id}`)
+      .put(`/users/${user2.id}`)
       .set("Authorization", `Bearer ${token}`)
       .send({ name: "Hackeado" });
 

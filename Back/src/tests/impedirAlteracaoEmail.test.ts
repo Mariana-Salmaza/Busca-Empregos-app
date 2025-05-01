@@ -28,7 +28,7 @@ describe("Restrição de alteração de e-mail", () => {
 
   it("não deve permitir que o usuário altere seu e-mail", async () => {
     const res = await request(app)
-      .put(`/api/users/${user.id}`)
+      .put(`/users/${user.id}`)
       .set("Authorization", `Bearer ${token}`)
       .send({ email: "novoemail@email.com" });
 

@@ -13,9 +13,9 @@ const router = express.Router();
 
 router.post("/", authMiddleware, createVacancy);
 router.get("/", getAllVacancies);
+router.get("/my/:id", authMiddleware, getAllUserVacancies);
 router.get("/:id", authMiddleware, getVacancyById);
 router.put("/:id", authMiddleware, updateVacancy);
 router.delete("/:id", authMiddleware, destroyVacancy);
-router.get("/my/:id", authMiddleware, getAllUserVacancies);
 
 export default router;

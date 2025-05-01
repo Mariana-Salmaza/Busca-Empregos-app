@@ -31,7 +31,7 @@ describe("Login de usuário", () => {
   });
 
   it("deve fazer login com email e senha válidos", async () => {
-    const res = await request(app).post("/api/login").send({
+    const res = await request(app).post("/login").send({
       email: "teste@email.com",
       password: "123456",
     });
@@ -42,7 +42,7 @@ describe("Login de usuário", () => {
   });
 
   it("deve falhar com email incorreto", async () => {
-    const res = await request(app).post("/api/login").send({
+    const res = await request(app).post("/login").send({
       email: "errado@email.com",
       password: "123456",
     });
@@ -52,7 +52,7 @@ describe("Login de usuário", () => {
   });
 
   it("deve falhar com senha incorreta", async () => {
-    const res = await request(app).post("/api/login").send({
+    const res = await request(app).post("/login").send({
       email: "teste@email.com",
       password: "senhaerrada",
     });
@@ -62,7 +62,7 @@ describe("Login de usuário", () => {
   });
 
   it("deve bloquear login de usuários não cadastrados", async () => {
-    const res = await request(app).post("/api/login").send({
+    const res = await request(app).post("/login").send({
       email: "naocadastrado@email.com",
       password: "123456",
     });

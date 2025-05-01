@@ -7,9 +7,8 @@ import {
 import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = express.Router();
-
-router.get("/api/favorites", authMiddleware, getAllFavorites);
-router.post("/api/favorites", authMiddleware, addFavorite);
-router.delete("/api/favorites/:id", authMiddleware, destroyFavorite);
+router.get("/", authMiddleware, getAllFavorites);
+router.post("/", authMiddleware, addFavorite);
+router.delete("/:id", authMiddleware, destroyFavorite);
 
 export default router;
