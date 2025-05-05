@@ -11,9 +11,10 @@ import Register from "./pages/Register";
 import PrivateRoute from "./components/PrivateRoute";
 import MyPubs from "./pages/MyPubs";
 import VacancyForm from "./pages/VacancyForm";
-import EditVacancyForm from "./pages/EditVacancyForm";
 import Home from "./pages/Home";
 import Footer from "./components/Footer";
+import Profile from "./pages/Profile";
+import EditProfileForm from "./pages/EditProfileForm";
 
 function App() {
   return (
@@ -35,7 +36,8 @@ function App() {
           <Route path="/job-details/:id" element={<JobDetails />} />
           <Route path="/myPubs" element={<MyPubs />} />
           <Route path="/vacancyForm" element={<VacancyForm />} />
-          <Route path="/EditVacancyForm" element={<EditVacancyForm />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/edit" element={<EditProfileForm />} />
         </Route>
       </Routes>
     </Router>

@@ -1,16 +1,64 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
+import { useEffect, useRef, useState } from "react";
+import axios from "axios";
 import "./Header.css";
 
 const Header = () => {
-  const { logout, isAuthenticated } = useAuth();
+  const { token, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [menuAberto, setMenuAberto] = useState(false);
+  const [userName, setUserName] = useState("");
+  const dropdownRef = useRef<HTMLLIElement>(null);
+
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (isAuthenticated && token) {
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:3000/users/${userId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setUserName(response.data.name);
+        } catch (err) {
+          console.error("Erro ao carregar os dados do usuário.", err);
+        }
+      };
+
+      fetchUserData();
+    }
+  }, [isAuthenticated, token]);
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
+
+  const toggleMenu = () => {
+    setMenuAberto(!menuAberto);
+  };
+
+  useEffect(() => {
+    function handleClickFora(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setMenuAberto(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickFora);
+    return () => {
+      document.removeEventListener("mousedown", handleClickFora);
+    };
+  }, []);
 
   return (
     <header className="header">
@@ -47,10 +95,31 @@ const Header = () => {
             </Link>
           </li>
           {isAuthenticated ? (
-            <li>
-              <button onClick={handleLogout} className="logout-button">
-                Logout
-              </button>
+            <li className="user-dropdown" ref={dropdownRef}>
+              <FaUserCircle
+                size={40}
+                className="user-icon"
+                onClick={toggleMenu}
+                style={{ cursor: "pointer" }}
+              />
+              {menuAberto && (
+                <ul className="dropdown-menu">
+                  <li className="dropdown-item">Bem-vindo, {userName}!</li>
+                  <li>
+                    <Link to="/profile/edit" className="dropdown-item">
+                      Editar Perfil
+                    </Link>
+                  </li>
+                  <li>
+                    <button
+                      onClick={handleLogout}
+                      className="dropdown-item logout-button"
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </ul>
+              )}
             </li>
           ) : (
             <li>
