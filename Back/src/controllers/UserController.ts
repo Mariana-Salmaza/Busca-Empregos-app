@@ -54,38 +54,28 @@ export const createUser = async (req: Request, res: Response) => {
       throw new Error("Este email já está registrado");
     }
 
-    const newUser = await UserModel.create({
-      name,
-      email,
-      password,
-      CPF,
-    });
+    const newUser = await UserModel.create({ name, email, password, CPF });
 
-    return res
-      .status(201)
-      .json({ message: "Usuário criado com sucesso", user: newUser });
+    return res.status(201).json({
+      message: "Usuário criado com sucesso",
+      user: newUser,
+    });
   } catch (error: any) {
-    console.log("Erro ao criar usuário:", error.message);
-    return res
-      .status(400)
-      .json({ error: error.message || "Erro ao criar o usuário" });
+    console.error("Erro ao criar usuário:", error.message);
+    return res.status(400).json({
+      error: error.message || "Erro ao criar o usuário",
+    });
   }
 };
 
 export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
-  const { name, password, CPF, email } = req.body;
-  const userId = parseInt(req.params.id);
+  const { name, email, password, newPassword, CPF } = req.body;
+  const userId = parseInt(req.params.id, 10);
   const authenticatedUser = req.user;
 
   if (!authenticatedUser || authenticatedUser.id !== userId) {
     return res.status(403).json({
       error: "Você só pode atualizar a sua própria conta",
-    });
-  }
-
-  if (email) {
-    return res.status(400).json({
-      error: "Alteração de e-mail não é permitida",
     });
   }
 
@@ -95,29 +85,72 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ error: "Usuário não encontrado" });
     }
 
-    if (CPF) {
-      const cpfExiste = await UserModel.findOne({ where: { CPF } });
-      const cpfEmUsoPorOutro = cpfExiste && cpfExiste.id !== userId;
+    if (name) user.name = name;
 
-      if (cpfEmUsoPorOutro) {
+    if (newPassword && password) {
+      if (typeof newPassword !== "string" || typeof password !== "string") {
+        return res.status(400).json({ error: "Senha inválida" });
+      }
+      if (!user.password) {
+        return res.status(400).json({ error: "Senha atual não encontrada" });
+      }
+
+      const isPasswordCorrect = await bcrypt.compare(password, user.password);
+      if (!isPasswordCorrect) {
+        return res.status(400).json({ error: "Senha atual incorreta" });
+      }
+
+      if (newPassword.length < 6) {
         return res.status(400).json({
-          error: "O CPF informado já está em uso",
+          error: "A nova senha deve ter pelo menos 6 caracteres",
         });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedPassword;
+    }
+
+    if (email) {
+      if (!isValidEmail(email)) {
+        return res.status(400).json({ error: "Email inválido" });
+      }
+
+      const existingEmail = await UserModel.findOne({ where: { email } });
+      if (existingEmail && existingEmail.id !== userId) {
+        return res.status(400).json({ error: "Este e-mail já está em uso" });
+      }
+
+      user.email = email;
+    }
+
+    if (CPF) {
+      if (!isValidCPF(CPF)) {
+        return res.status(400).json({ error: "CPF inválido" });
+      }
+
+      const cpfExistente = await UserModel.findOne({ where: { CPF } });
+      if (cpfExistente && cpfExistente.id !== userId) {
+        return res
+          .status(400)
+          .json({ error: "O CPF informado já está em uso" });
       }
 
       user.CPF = CPF;
     }
 
-    if (name) user.name = name;
-    if (password) user.password = await bcrypt.hash(password, 10);
-
     await user.save();
 
     return res.status(200).json({
       message: "Usuário atualizado com sucesso",
-      user,
+      user: {
+        id: user.id,
+        name: user.name,
+        CPF: user.CPF,
+        email: user.email,
+      },
     });
   } catch (error) {
+    console.error("Erro ao atualizar usuário:", error);
     return res.status(500).json({
       error: "Erro interno no servidor",
       details: error,
@@ -134,19 +167,22 @@ export const destroyUserById = async (
     const authUser = req.user;
 
     if (!authUser || authUser.id !== userId) {
-      return res
-        .status(403)
-        .json({ error: "You can only delete your own account" });
+      return res.status(403).json({
+        error: "Você só pode excluir a sua própria conta",
+      });
     }
 
     const user = await UserModel.findByPk(userId);
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "Usuário não encontrado" });
     }
 
     await user.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: "Internal server error", details: error });
+    res.status(500).json({
+      error: "Erro interno no servidor",
+      details: error,
+    });
   }
 };
