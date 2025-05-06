@@ -8,7 +8,7 @@ interface User {
   name: string;
   email: string;
   password?: string;
-}
+} 
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);

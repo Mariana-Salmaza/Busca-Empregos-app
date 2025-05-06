@@ -9,29 +9,25 @@ const Header = () => {
   const { token, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [menuAberto, setMenuAberto] = useState(false);
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState(localStorage.getItem("userName") || "");
   const dropdownRef = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    if (isAuthenticated && token) {
-      const fetchUserData = async () => {
-        try {
-          const response = await axios.get(
-            `http://localhost:3000/users/${userId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+    if (isAuthenticated && token && userId) {
+      axios
+        .get(`http://localhost:3000/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
           setUserName(response.data.name);
-        } catch (err) {
+          localStorage.setItem("userName", response.data.name);
+        })
+        .catch((err) => {
           console.error("Erro ao carregar os dados do usuário.", err);
-        }
-      };
-
-      fetchUserData();
+        });
     }
   }, [isAuthenticated, token]);
 

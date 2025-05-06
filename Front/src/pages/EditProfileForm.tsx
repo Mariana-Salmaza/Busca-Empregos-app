@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./EditProfileForm.css";
+import Swal from "sweetalert2";
+import "./VacancyForm.css";
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
-
-const EditProfileForm: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
+const EditProfileForm = () => {
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [password, setPassword] = useState<string>("");
-  const [newPassword, setNewPassword] = useState<string>("");
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [isChangingPassword, setIsChangingPassword] = useState(false); 
+
+  const navigate = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     const userId = localStorage.getItem("userId");
@@ -28,13 +26,14 @@ const EditProfileForm: React.FC = () => {
     }
 
     axios
-      .get<User>(`http://localhost:3000/users/${userId}`, {
+      .get<any>(`http://localhost:3000/users/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
+        const { name, email } = response.data;
         setUser(response.data);
-        setName(response.data.name);
-        setEmail(response.data.email);
+        setName(name);
+        setEmail(email);
         setLoading(false);
       })
       .catch((error) => {
@@ -46,17 +45,24 @@ const EditProfileForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const userData = {
-      name,
-      email,
-      password,
-      newPassword,
-    };
+    const token = localStorage.getItem("authToken");
+    const userId = localStorage.getItem("userId");
 
+    if (!token || !userId) return;
+
+    if (newPassword && !password) {
+      alert("Informe sua senha atual para alterar a senha.");
+      return;
+    }
+
+    const userData: any = { name, email };
+    if (newPassword) {
+      userData.password = password;
+      userData.newPassword = newPassword;
+    }
+
+    setIsSubmitting(true);
     try {
-      const token = localStorage.getItem("authToken");
-      const userId = localStorage.getItem("userId");
-
       const response = await axios.put(
         `http://localhost:3000/users/${userId}`,
         userData,
@@ -65,15 +71,28 @@ const EditProfileForm: React.FC = () => {
         }
       );
 
-      console.log("Perfil atualizado:", response.data);
 
-      alert("Perfil atualizado com sucesso!");
+      localStorage.setItem("userName", response.data.user.name);
 
-      // Redireciona para a página home após sucesso
+      await Swal.fire({
+        icon: "success",
+        title: "Sucesso!",
+        text: "Perfil atualizado com sucesso.",
+        confirmButtonText: "OK",
+      });
+
       navigate("/home");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao atualizar perfil:", error);
-      alert("Erro ao atualizar perfil. Tente novamente.");
+      const msg =
+        error?.response?.data?.error || "Erro ao atualizar perfil. Tente novamente.";
+      await Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: msg,
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -82,54 +101,71 @@ const EditProfileForm: React.FC = () => {
   }
 
   return (
-    <div>
-      <h2>Editar Perfil</h2>
-      {user ? (
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>Nome:</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
+    <div className="login-container">
+      <div className="login-box">
+        <h2 className="login-title">Editar Perfil</h2>
+        {user ? (
+          <form onSubmit={handleSubmit}>
+            <div className="input-group">
+              <label>Nome:</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
 
-          <div>
-            <label>Email:</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
+            <div className="input-group">
+              <label>Email:</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
 
-          <div>
-            <label>Senha Atual:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+            <div className="input-group">
+              <label>Senha Atual (necessária para trocar a senha):</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={!isChangingPassword}
+                required={isChangingPassword} 
+              />
+            </div>
 
-          <div>
-            <label>Nova Senha:</label>
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-          </div>
+            <div className="input-group">
+              <label>Nova Senha:</label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                  setIsChangingPassword(e.target.value.length > 0);
+                }}
+              />
+            </div>
 
-          <button type="submit">Atualizar Perfil</button>
-        </form>
-      ) : (
-        <p>Erro ao carregar os dados do perfil.</p>
-      )}
+            <div className="job-card-buttons">
+              <button
+                type="button"
+                className="cancel-button"
+                onClick={() => navigate("/profile")}
+              >
+                Cancelar
+              </button>
+              <button type="submit" className="action-button" disabled={isSubmitting}>
+                {isSubmitting ? "Atualizando..." : "Atualizar Perfil"}
+              </button>
+            </div>
+          </form>
+        ) : (
+          <p>Erro ao carregar os dados do perfil.</p>
+        )}
+      </div>
     </div>
   );
 };
